@@ -1,0 +1,100 @@
+import streamlit as st
+
+st.set_page_config(
+    page_title="TruthLens AI",
+    page_icon="🔎",
+    layout="centered"
+)
+
+st.title("TruthLens AI")
+st.subheader("Social Media Misinformation Detection")
+
+st.write(
+    "Paste a social media post or news claim "
+    "to check for warning signs."
+)
+
+st.info(
+    "This is a simple prototype. It cannot prove "
+    "whether a claim is true or false."
+)
+
+
+def analyze_claim(text):
+    text = text.lower()
+
+    warning_words = [
+        "share immediately",
+        "forward to everyone",
+        "100% guaranteed",
+        "miracle cure",
+        "secret they don't want you to know",
+        "breaking news"
+    ]
+
+    absolute_words = [
+        "always",
+        "never",
+        "everyone",
+        "nobody",
+        "guaranteed",
+        "cures every disease"
+    ]
+
+    warnings = []
+
+    for word in warning_words:
+        if word in text:
+            warnings.append(
+                "Attention-grabbing wording: " + word
+            )
+
+    for word in absolute_words:
+        if word in text:
+            warnings.append(
+                "Absolute claim detected: " + word
+            )
+
+    if len(warnings) >= 2:
+        result = "Several warning signs detected"
+    elif len(warnings) == 1:
+        result = "Needs further verification"
+    else:
+        result = "No listed warning signs detected"
+
+    return result, warnings
+
+
+claim = st.text_area(
+    "Enter a social media post or news claim",
+    placeholder="Paste your claim here...",
+    height=150
+)
+
+if st.button("Analyze Claim"):
+
+    if claim.strip() == "":
+        st.warning("Please enter a claim first.")
+
+    else:
+        result, warnings = analyze_claim(claim)
+
+        st.subheader("Analysis Result")
+        st.write(result)
+
+        if warnings:
+            st.write("Warning signs:")
+            for warning in warnings:
+                st.write("- " + warning)
+        else:
+            st.write(
+                "No matching warning patterns were found."
+            )
+
+        st.caption(
+            "Check reliable sources before sharing. "
+            "No warning signs does not mean a claim is true."
+        )
+
+st.divider()
+st.caption("TruthLens AI | Hackathon Prototype")
